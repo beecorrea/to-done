@@ -32,7 +32,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("To-do:\n\n")
+	fmt.Printf("%d to-dos:\n\n", len(todos))
 	for _, t := range todos {
 		fmt.Printf("\t- %v\n", t)
 	}

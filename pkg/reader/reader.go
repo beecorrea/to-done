@@ -12,7 +12,7 @@ var (
 	parentDir       = "../"
 )
 
-var blocklist = map[string]struct{}{".git": struct{}{}}
+var blocklist = map[string]struct{}{".git": {}}
 
 // Reads a file and returns its content along with an error, if any.
 func GetFileContents(path string) (string, error) {

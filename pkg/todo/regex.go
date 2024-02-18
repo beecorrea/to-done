@@ -5,9 +5,8 @@ import (
 	"regexp"
 )
 
-// todo: find a way to make beginsWith regex work.
 // todo: allow passing single line comments as a parameter.
-var opTodo = `// (?i)todo:(.+)`
+var opTodo = `(?mi)^\s*//\s*todo:\s*(.+)`
 
 // Todo: convert to custom error
 var ErrNoTodos = fmt.Errorf("file has no todos")
