@@ -8,6 +8,6 @@ Helping you move your To-Do's to To-Done.
 Requires:
 - Go 1.20
 
-`go get github.com/beecorrea/to-done@latest`
+`go install github.com/beecorrea/to-done/cmd/todone@latest`
 
 `todone [directory]`
