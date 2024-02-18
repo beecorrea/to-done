@@ -2,7 +2,6 @@ package reader
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -72,13 +71,6 @@ func resolvePath(path string) string {
 	}
 
 	return path
-}
-
-// Removes a root from the path so it won't show up in pretty-print.
-func StripRootFromPath(root string, path string) string {
-	abs := resolvePath(root)
-	trailing := fmt.Sprintf("%s/", abs)
-	return strings.Replace(path, trailing, "", -1)
 }
 
 type WalkFn func(string) string
