@@ -20,6 +20,7 @@ func FindTodos(r *regexp.Regexp, s string) []string {
 	}
 
 	trimmed := make([]string, 0)
+	// todo: should be refactored?
 	for _, g := range groups {
 		for _, m := range g[1:] {
 			trim := strings.Trim(m, " ")

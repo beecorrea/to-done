@@ -2,6 +2,7 @@ package reader
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -15,36 +16,48 @@ func TestReadFile(t *testing.T) {
 
 func TestReadDir(t *testing.T) {
 	dir := "../../data"
-	files, err := GetFilesInDir(dir)
-	fmt.Println(files)
+	_, err := GetFilesInDir(dir)
 	if err != nil {
 		t.Fatalf("should read all files in dir.")
 	}
 }
 
 func TestReadDirRecursive(t *testing.T) {
-	dir := "../"
-	files, err := GetFilesInDir(dir)
-	fmt.Println(files)
+	dir := parentDir
+	_, err := GetFilesInDir(dir)
 	if err != nil {
 		t.Fatalf("should read all files in child dirs.")
 	}
 }
 
 func TestReadDirCurrent(t *testing.T) {
-	dir := CurrentDir
-	files, err := GetFilesInDir(dir)
-	fmt.Println(files)
+	dir := currentDir
+	_, err := GetFilesInDir(dir)
 	if err != nil {
 		t.Fatalf("should read all files in current dir.")
 	}
 }
 
 func TestReadDirCurrentSlash(t *testing.T) {
-	dir := CurrentDirSlash
-	files, err := GetFilesInDir(dir)
-	fmt.Println(files)
+	dir := currentDirSlash
+	_, err := GetFilesInDir(dir)
 	if err != nil {
 		t.Fatalf("should read all files in current dir even if dir has slash.")
+	}
+}
+
+func TestReadDirIgnore(t *testing.T) {
+	dir := "../../"
+	files, err := GetFilesInDir(dir)
+	if err != nil {
+		t.Fatalf("should read all files in dir '%s'", dir)
+	}
+	for _, f := range files {
+		fmt.Println(f)
+		for k := range blocklist {
+			if strings.Contains(f, k) {
+				t.Fatalf("should ignore file if it's in blocklist.")
+			}
+		}
 	}
 }

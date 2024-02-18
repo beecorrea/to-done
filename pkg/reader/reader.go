@@ -7,10 +7,12 @@ import (
 )
 
 var (
-	CurrentDir      = "."
-	CurrentDirSlash = "./"
-	ParentDir       = "../"
+	currentDir      = "."
+	currentDirSlash = "./"
+	parentDir       = "../"
 )
+
+var blocklist = map[string]struct{}{".git": struct{}{}}
 
 // Reads a file and returns its content along with an error, if any.
 func GetFileContents(path string) (string, error) {
@@ -29,16 +31,19 @@ func GetFilesInDir(path string) ([]string, error) {
 
 	pathsList := make([]string, 0)
 	for _, entry := range dir {
-		fullPath := filepath.Join(absPath, entry.Name())
-
-		if !entry.IsDir() {
-			pathsList = append(pathsList, fullPath)
-		} else {
-			paths, err := GetFilesInDir(fullPath)
-			if err != nil {
-				return nil, err
+		// todo: this should be a dependency.
+		if _, ok := blocklist[entry.Name()]; !ok {
+			fullPath := filepath.Join(absPath, entry.Name())
+			// todo: refactor to another function. maybe GetFilesFrom(path).
+			if !entry.IsDir() {
+				pathsList = append(pathsList, fullPath)
+			} else {
+				paths, err := GetFilesInDir(fullPath)
+				if err != nil {
+					return nil, err
+				}
+				pathsList = append(pathsList, paths...)
 			}
-			pathsList = append(pathsList, paths...)
 		}
 	}
 
@@ -47,8 +52,8 @@ func GetFilesInDir(path string) ([]string, error) {
 
 // If path is '.' or './', get absolute path to current dir.
 func resolvePath(path string) string {
-	isCurrDir := path == CurrentDir || strings.HasPrefix(path, CurrentDirSlash)
-	isParentDir := strings.HasPrefix(path, ParentDir)
+	isCurrDir := path == currentDir || strings.HasPrefix(path, currentDirSlash)
+	isParentDir := strings.HasPrefix(path, parentDir)
 	needsResolution := isCurrDir || isParentDir
 
 	if needsResolution {

@@ -14,6 +14,7 @@ func TodosFrom(path string) ([]string, error) {
 	}
 
 	todos := FindTodos(r, ct)
+	// todo: change to len(todos) == 0
 	if len(todos) < 1 {
 		return nil, ErrNoTodos
 	}
