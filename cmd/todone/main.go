@@ -2,13 +2,18 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/beecorrea/to-done/internal/controllers"
 )
 
-var dir = "."
-
 func main() {
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	todos, errs := controllers.Todos(dir)
 	if len(errs) > 0 {
 		for f, err := range errs {
@@ -23,7 +28,8 @@ func main() {
 
 	fmt.Printf("%d to-dos:\n\n", numTodos)
 	for filename, t := range todos {
-		fmt.Printf(" [%s]\n", filename)
+		prettyFile := strings.Replace(filename, dir+"/", "", -1)
+		fmt.Printf(" [%s]\n", prettyFile)
 		for _, line := range t {
 			fmt.Printf("   (line %d): %s\n", line.Number, line.Content)
 		}

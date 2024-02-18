@@ -2,6 +2,7 @@ package reader
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,12 +52,16 @@ func GetFilesInDir(path string) ([]string, error) {
 	return pathsList, nil
 }
 
-// If path is '.' or './', get absolute path to current dir.
-func resolvePath(path string) string {
+// Checks if the path has '.', './' or '../'.
+func hasSpecialReference(path string) bool {
 	isCurrDir := path == currentDir || strings.HasPrefix(path, currentDirSlash)
 	isParentDir := strings.HasPrefix(path, parentDir)
-	needsResolution := isCurrDir || isParentDir
+	return isCurrDir || isParentDir
+}
 
+// If path is '.' or './', get absolute path to current dir.
+func resolvePath(path string) string {
+	needsResolution := hasSpecialReference(path)
 	if needsResolution {
 		p, err := filepath.Abs(path)
 		if err != nil {
@@ -69,13 +74,22 @@ func resolvePath(path string) string {
 	return path
 }
 
-type WalkFn func(string) string
-type LineInfo struct {
-	Content  string
-	Number   int
-	Filename string
+// Removes a root from the path so it won't show up in pretty-print.
+func StripRootFromPath(root string, path string) string {
+	abs := resolvePath(root)
+	trailing := fmt.Sprintf("%s/", abs)
+	return strings.Replace(path, trailing, "", -1)
 }
 
+type WalkFn func(string) string
+type LineInfo struct {
+	Content      string
+	Number       int
+	Filename     string
+	PathFromRoot string
+}
+
+// Applies a WalkFn throughout a file and generates LineInfo for every successful apply.
 func WalkFile(path string, fn WalkFn) ([]LineInfo, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -100,6 +114,7 @@ func WalkFile(path string, fn WalkFn) ([]LineInfo, error) {
 	return infos, nil
 }
 
+// Auxiliary function to group by filename.
 func GroupByFilename(lines []LineInfo) map[string][]LineInfo {
 	groups := make(map[string][]LineInfo, 0)
 	for _, line := range lines {
