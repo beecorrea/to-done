@@ -20,7 +20,9 @@ func findTodoWalk(s string) string {
 	return todo.FindTodo(todo.ROpTodo, s)
 }
 
+// TODO: Add export to YAML.
 func Todos(root string) (map[string][]reader.LineInfo, map[string]error) {
+	// todo: replace with ordered map.
 	errs := make(map[string]error, 0)
 	todos := make(map[string][]reader.LineInfo, 0)
 	files, err := reader.GetFilesInDir(root)
