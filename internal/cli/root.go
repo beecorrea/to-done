@@ -38,13 +38,19 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	for filename, t := range todos {
-		prettyFile := strings.Replace(filename, folder+"/", "", -1)
-		fmt.Printf(" [%s]\n", prettyFile)
+
+		fmt.Printf(" [%s]\n", prettyFile(filename, folder))
 		for _, line := range t {
 			fmt.Printf("   (line %d): %s\n", line.Number, line.Content)
 		}
 		fmt.Printf("\n")
 	}
+}
+
+func prettyFile(filename string, folder string) string {
+	fld, _ := os.Getwd()
+	prettyFile := strings.Replace(filename, fld+"/", "", -1)
+	return prettyFile
 }
 
 func Execute() {

@@ -24,7 +24,7 @@ func GetFileContents(path string) (string, error) {
 // Reads a directory and returns all files in that dir.
 // If a file is a directory, the function recurses to that directory.
 func GetFilesInDir(path string) ([]string, error) {
-	absPath := resolvePath(path)
+	absPath := ResolvePath(path)
 	dir, err := os.ReadDir(absPath)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func hasSpecialReference(path string) bool {
 }
 
 // If path is '.' or './', get absolute path to current dir.
-func resolvePath(path string) string {
+func ResolvePath(path string) string {
 	needsResolution := hasSpecialReference(path)
 	if needsResolution {
 		p, err := filepath.Abs(path)
