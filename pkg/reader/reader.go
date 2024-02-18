@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"bufio"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,4 +67,43 @@ func resolvePath(path string) string {
 	}
 
 	return path
+}
+
+type WalkFn func(string) string
+type LineInfo struct {
+	Content  string
+	Number   int
+	Filename string
+}
+
+func WalkFile(path string, fn WalkFn) ([]LineInfo, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	infos := make([]LineInfo, 0)
+	scanner := bufio.NewScanner(f)
+	currLine := 1
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		apply := fn(line)
+		if apply != "" {
+			lineInfo := LineInfo{Content: apply, Number: currLine, Filename: path}
+			infos = append(infos, lineInfo)
+		}
+		currLine++
+	}
+
+	return infos, nil
+}
+
+func GroupByFilename(lines []LineInfo) map[string][]LineInfo {
+	groups := make(map[string][]LineInfo, 0)
+	for _, line := range lines {
+		groups[line.Filename] = append(groups[line.Filename], line)
+	}
+	return groups
 }

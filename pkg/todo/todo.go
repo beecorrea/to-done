@@ -8,8 +8,12 @@ import (
 // Matches the first todo using a regex.
 func FindTodo(r *regexp.Regexp, s string) string {
 	matches := r.FindStringSubmatch(s)
-	first := matches[1]
-	return strings.Trim(first, " ")
+	if matches != nil {
+		first := matches[1]
+		return strings.Trim(first, " ")
+	}
+
+	return ""
 }
 
 // Matches all todos in a string using the OpTodo regex.
